@@ -28,7 +28,7 @@ https://miniclinic-你的帳號.onrender.com
 ## 本機執行
 
 ```bash
-git clone https://github.com/你的帳號/miniclinic.git
+git clone https://github.com/joker5117/miniclinic.git
 cd miniclinic
 ./mvnw spring-boot:run
 ```
