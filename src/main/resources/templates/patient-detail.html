@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${patient.name} + ' - 病患詳細資料'"></title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #0F2443; }
+        .card { background: #F8FAFC; padding: 24px; border-left: 5px solid #14B8A6; border-radius: 4px; }
+        dt { font-weight: bold; color: #0F2443; margin-top: 12px; }
+        dd { margin-left: 0; margin-bottom: 8px; }
+        .back { display: inline-block; margin-top: 20px; color: #14B8A6; }
+    </style>
+</head>
+<body>
+    <h1 th:text="${patient.name}">病患姓名</h1>
+    <div class="card">
+        <dl>
+            <dt>病歷號</dt><dd th:text="${patient.chartNo}">TEST00001</dd>
+            <dt>性別</dt>    <dd th:text="${patient.gender}">男</dd>
+            <dt>電話</dt>    <dd th:text="${patient.phone}">0912-345-678</dd>
+        </dl>
+    </div>
+    <a th:href="@{/patients}" class="back">← 返回清單</a>
+</body>
+</html>

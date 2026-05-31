@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>MiniClinic 社區診所</title>
+    <style>
+        /* 保持與掛號記錄頁面完全一致的滿版舒適排版 */
+        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #0F2443; border-bottom: 3px solid #14B8A6; padding-bottom: 8px; font-size: 2rem; }
+        
+        /* === 導覽列樣式：完全復刻深藍色背景 === */
+        nav { background: #0F2443; padding: 12px; border-radius: 8px; margin-bottom: 24px; }
+        nav a { color: white; margin-right: 20px; text-decoration: none; font-weight: bold; opacity: 0.85; transition: all 0.2s; }
+        nav a:hover { color: #5EEAD4; opacity: 1; }
+        
+        /* === 當前「首頁」被選中時的亮綠色字體與底線 === */
+        nav a.nav-active {
+            color: #5EEAD4 !important;
+            opacity: 1 !important;
+            border-bottom: 2px solid #5EEAD4;
+            padding-bottom: 2px;
+        }
+
+        /* 內容區塊樣式 */
+        section { margin-top: 20px; line-height: 1.8; color: #334155; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; font-size: 1.05rem; }
+    </style>
+</head>
+<body>
+    <h1>MiniClinic 社區診所</h1>
+
+    <nav>
+	<a th:href="@{/}">首頁</a>
+	<a th:href="@{/doctors}">醫師清單</a>
+	<a th:href="@{/appointment/new}">線上掛號</a>
+	<a th:href="@{/patients}">病歷資料</a>
+	<a th:href="@{/appointments}">掛號記錄</a>
+	<a th:href="@{/stats}">統計資訊</a>
+	<a th:href="@{/login}">醫師登入</a>  
+</nav>
+
+    <section>
+        <p>歡迎蒞臨 MiniClinic。我們提供下列科別的門診服務：</p>
+        <ul>
+            <li>家醫科</li>
+            <li>內科</li>
+            <li>復健科</li>
+            <li>小兒科</li>
+            <li>身心科</li>
+        </ul>
+    </section>
+</body>
+</html>

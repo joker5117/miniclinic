@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>統計資訊 - MiniClinic</title>
+    <style>
+        /* 沿用全站一致的 900px 舒適排版與字體 */
+        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #0F2443; border-bottom: 3px solid #14B8A6; padding-bottom: 8px; font-size: 2rem; }
+        
+        /* === 導覽列樣式：滿版深藍色背景 === */
+        nav { background: #0F2443; padding: 14px 20px; border-radius: 6px; margin-bottom: 24px; display: flex; gap: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: bold; font-size: 0.95rem; opacity: 0.85; transition: all 0.2s; }
+        nav a:hover { color: #5EEAD4; opacity: 1; }
+        
+        /* 當前「統計資訊」亮起亮綠色與底線 */
+        nav a.nav-active {
+            color: #5EEAD4 !important;
+            opacity: 1 !important;
+            border-bottom: 2px solid #5EEAD4;
+            padding-bottom: 2px;
+        }
+
+        /* === 數據卡片區塊 (KPI Cards) === */
+        .stats-row { display: flex; gap: 20px; margin: 30px 0; }
+        .card { 
+            flex: 1; 
+            background: #F8FAFC; 
+            border: 1px solid #E2E8F0; 
+            border-radius: 12px; 
+            padding: 24px; 
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .card h3 { color: #64748B; margin: 0; font-size: 0.95rem; font-weight: bold; }
+        .card .number { 
+            color: #0F2443; 
+            font-size: 2.5rem; 
+            font-weight: bold; 
+            margin: 12px 0 0 0; 
+            display: block;
+        }
+
+        /* === 科別統計表格樣式 === */
+        h2 { color: #0F2443; font-size: 1.25rem; margin-top: 40px; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #0F2443; color: white; padding: 12px; text-align: left; font-size: 0.95rem; }
+        td { padding: 12px; border-bottom: 1px solid #E2E8F0; color: #334155; font-size: 0.95rem; }
+        tr:hover td { background: #F8FAFC; }
+
+        /* 底部連結 */
+        .bottom-links { margin-top: 30px; padding-top: 15px; border-top: 1px solid #E2E8F0; }
+        .bottom-links a { color: #14B8A6; text-decoration: none; font-size: 0.95rem; }
+        .bottom-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">首頁</a>
+        <a th:href="@{/doctors}">醫師清單</a>
+        <a th:href="@{/appointment/new}">線上掛號</a>
+        <a th:href="@{/patients}">病歷資料</a>
+        <a th:href="@{/appointments}">掛號記錄</a>
+        <a th:href="@{/stats}" th:classappend="'nav-active'">統計資訊</a>
+        <a th:href="@{/login}">醫師登入</a>  
+    </nav>
+
+    <h1>統計資訊</h1>
+
+    <div class="stats-row">
+        <div class="card">
+            <h3>醫師總數</h3>
+            <span class="number" th:text="${doctorCount}">0</span>
+        </div>
+        <div class="card">
+            <h3>病患總數</h3>
+            <span class="number" th:text="${patientCount}">0</span>
+        </div>
+        <div class="card">
+            <h3>掛號總數</h3>
+            <span class="number" th:text="${appointmentCount}">0</span>
+        </div>
+    </div>
+
+    <h2>各科別掛號總數</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 60%;">科別</th>
+                <th style="width: 40%;">掛號數</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${deptStats}">
+                <td th:text="${entry.key}">家醫科</td>
+                <td th:text="${entry.value}">0</td>
+            </tr>
+            <tr th:if="${deptStats == null or deptStats.isEmpty()}">
+                <td colspan="2" style="text-align: center; color: #94A3B8; padding: 20px;">目前尚無掛號統計數據</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="bottom-links">
+        <a th:href="@{/appointments}">查看詳細統計</a> | <a th:href="@{/}" style="color: #64748B;">回首頁</a>
+    </p>
+</body>
+</html>
