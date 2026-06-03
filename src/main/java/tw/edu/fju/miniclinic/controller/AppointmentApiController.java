@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpSession;
 
 import java.time.LocalDate;
+import java.util.HashMap; // 新增 import
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +27,35 @@ public class AppointmentApiController {
 
     @Autowired
     private DoctorRepository doctorRepo;
+
+    // 功能二新增：統計需要用到病患 Repository，在這裡注入
+    @Autowired
+    private PatientRepository patientRepo;
+
+    /**
+     * 功能二：統計摘要端點 GET /api/stats
+     * 完美對齊你專案的 Map 風格，不需要任何 DTO 檔案，且格式 100% 吻合
+     */
+    @GetMapping("/api/stats")
+    public Map<String, Object> getStats() {
+        Map<String, Object> response = new HashMap<>();
+        
+        // 1. 查詢各大表總筆數
+        response.put("totalDoctors", doctorRepo.count());
+        response.put("totalPatients", patientRepo.count());
+        response.put("totalAppointments", appointmentRepo.count());
+
+        // 2. 建立內層的 Map 統計各狀態數量
+        Map<String, Long> byStatus = new HashMap<>();
+        byStatus.put("BOOKED", appointmentRepo.countByStatus("BOOKED"));
+        byStatus.put("COMPLETED", appointmentRepo.countByStatus("COMPLETED"));
+        byStatus.put("CANCELLED", appointmentRepo.countByStatus("CANCELLED"));
+
+        // 3. 塞入外層 Map 組成巢狀結構
+        response.put("byStatus", byStatus);
+
+        return response;
+    }
 
     // 端點 1：回傳總掛號數 JSON {"count": X}
     @GetMapping("/api/appointments/count")
@@ -58,30 +88,31 @@ public class AppointmentApiController {
         // 情況 C：什麼都沒傳，回傳全部掛號
         return ResponseEntity.ok(appointmentRepo.findAll());
     }
+
     @PutMapping("/api/appointments/{apptId}/status")
-public ResponseEntity<Appointment> updateStatus(
-		@PathVariable Long apptId,
-		@RequestBody Map<String, String> payload,
-		HttpSession session) {
+    public ResponseEntity<Appointment> updateStatus(
+            @PathVariable Long apptId,
+            @RequestBody Map<String, String> payload,
+            HttpSession session) {
 
-	String loggedInDoctorId = (String) session.getAttribute("loggedInDoctorId");
+        String loggedInDoctorId = (String) session.getAttribute("loggedInDoctorId");
 
-	Appointment appt = appointmentRepo.findById(apptId).orElse(null);
-	if (appt == null) {
-		return ResponseEntity.notFound().build();
-	}
+        Appointment appt = appointmentRepo.findById(apptId).orElse(null);
+        if (appt == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-	// 只能修改自己的掛號
-	if (!appt.getDoctor().getDoctorId().equals(loggedInDoctorId)) {
-		return ResponseEntity.status(403).build();
-	}
+        // 只能修改自己的掛號
+        if (!appt.getDoctor().getDoctorId().equals(loggedInDoctorId)) {
+            return ResponseEntity.status(403).build();
+        }
 
-	String newStatus = payload.get("status");
-	if (!List.of("BOOKED", "COMPLETED", "CANCELLED").contains(newStatus)) {
-		return ResponseEntity.badRequest().build();
-	}
+        String newStatus = payload.get("status");
+        if (!List.of("BOOKED", "COMPLETED", "CANCELLED").contains(newStatus)) {
+            return ResponseEntity.badRequest().build();
+        }
 
-	appt.setStatus(newStatus);
-	return ResponseEntity.ok(appointmentRepo.save(appt));
-}
+        appt.setStatus(newStatus);
+        return ResponseEntity.ok(appointmentRepo.save(appt));
+    }
 }
