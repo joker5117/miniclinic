@@ -12,7 +12,13 @@
         table { width: 100%; border-collapse: collapse; margin-top: 24px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #E2E8F0; }
         th { background: #0F2443; color: white; }
-        .btn-cancel { background: #EF4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        
+        /* 保持你原本的取消按鈕樣式 */
+        .btn-cancel { background: #EF4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 4px; }
+        
+        /* 新增：看診完成按鈕的綠色樣式 */
+        .btn-complete { background: #10B981; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        
         .status-BOOKED    { color: #F59E0B; font-weight: bold; }
         .status-COMPLETED { color: #10B981; font-weight: bold; }
         .status-CANCELLED { color: #94A3B8; }
@@ -54,19 +60,45 @@
                           th:class="${'status-' + appt.status}">BOOKED</span>
                 </td>
                 <td>
-                    <button th:if="${appt.status == 'BOOKED'}"
-                            th:data-id="${appt.apptId}"
-                            class="btn-cancel"
-                            onclick="cancelAppointment(this)">取消</button>
-                </td>
+                    <th:block th:if="${appt.status == 'BOOKED'}">
+                        <button th:data-id="${appt.apptId}"
+                                class="btn-complete"
+                                onclick="completeAppointment(this)">看診完成</button>
+                                
+                        <button th:data-id="${appt.apptId}"
+                                class="btn-cancel"
+                                onclick="cancelAppointment(this)">取消</button>
+                    </th:block>
+                    
+                    </td>
             </tr>
         </tbody>
     </table>
-        <p style="text-align: center; margin-top: 20px;">
+    <p style="text-align: center; margin-top: 20px;">
         <a th:href="@{/}">← 回首頁</a>
     </p>
 
     <script>
+    // 新增：看診完成的 JS 處理函式
+    function completeAppointment(btn) {
+        const id = btn.getAttribute('data-id');
+        if (confirm('確定要將此掛號設定為「看診完成」嗎？')) {
+            fetch(`/api/appointments/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'COMPLETED' })
+            })
+            .then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('更新失敗，請稍後再試');
+                }
+            });
+        }
+    }
+
+    // 你原本就有的取消掛號函式
     function cancelAppointment(btn) {
         const id = btn.getAttribute('data-id');
         if (confirm('確定要取消此掛號嗎？')) {
